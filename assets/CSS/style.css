@@ -50,4 +50,14 @@ html, body {
         bottom: 0;
       }
 
+#searchArea {
+  background-color: rgba(73, 145, 94, 0.7);
+  border:rgba(53, 135, 95) solid 4px;
+  margin: 2% auto;
+  width: 60%;
+  height: 80%;
+  text-align: center;
+  color: antiquewhite;
+  overflow: auto;
+}
       

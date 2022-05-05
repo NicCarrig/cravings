@@ -2,32 +2,53 @@ var food = "popular";
 const foodKey = "0042429a5d9430ed059f828e86fb5761";
 const recipeId = "f44e018b";
 
-
+var recipeIndex = 0;
 
 
 function callFoodAPI() {
+  recipeIndex = 0;
   //call correct API, get data, and pass it to createIngrList()
   // var foodInput = $(this).parent().siblings("input").val();
   var foodInput = $(this).siblings("input").val();
-  // console.log(foodInput);
+  console.log(foodInput);
   var foodApi = `https://api.edamam.com/search?q=${foodInput}&app_id=${recipeId}&app_key=${foodKey}&from=0&to=20`;
   fetch(foodApi)
     .then(function (data) {
       return data.json();
     })
     .then(function (data) {
-      console.log(data);
-      var foodArray = data.hits[0].recipe.ingredientLines;
-      var foodName = data.hits[0].recipe.label;
-      var foodImg = data.hits[0].recipe.image;
-      displayIngrList(foodArray, foodName);
-      displayImage(foodImg);
+      var prevSearch = JSON.stringify(data);
+      localStorage.setItem("input", prevSearch);
+      selectFood(recipeIndex);
+      // console.log(data);
+      // var foodArray = data.hits[0].recipe.ingredientLines;
+      // var foodName = data.hits[0].recipe.label;
+      // var foodImg = data.hits[0].recipe.image;
+      // displayIngrList(foodArray, foodName);
+      // displayImage(foodImg);
     });
 
-  console.log(foodInput);
+}
+function selectFood(recipeIndex){
+  var data = JSON.parse(localStorage.getItem("input"));
+  console.log(data);
+  console.log(recipeIndex);
+  var foodArray = data.hits[recipeIndex].recipe.ingredientLines;
+  var foodName = data.hits[recipeIndex].recipe.label;
+  var foodImg = data.hits[recipeIndex].recipe.image;
+  if(!foodArray[recipeIndex-1]){
+    //disable prevBtn
+  }
+  if(!foodArray[recipeIndex+1]){
+    //disable nextBtn
+  }
+  // console.log(!!foodArray[recipeIndex-1]);
+  displayIngrList(foodArray, foodName);
+  displayImage(foodImg);
 }
 
 function callDrinkAPI() {
+  recipeIndex = 0;
   // var drinkInput = $(this).parent().siblings("input").val();
   var drinkInput = $(this).siblings("input").val();
   console.log("Drink button click, search: " + drinkInput);
@@ -39,13 +60,20 @@ function callDrinkAPI() {
     return data.json();
   })
   .then(function (data){
-    var drinkArray = data;
-    // displayIngrList(drinkArray);
-    console.log(drinkArray);
-    // console.log(drinkArray.drinks);
-    // console.log(drinkArray.drinks[0]);
-    createDrinkArray(drinkArray.drinks[0]);
+    selectDrink(data, recipeIndex);
+    // var drinkArray = data;
+    // console.log(drinkArray);
+    // // console.log(drinkArray.drinks);
+    // // console.log(drinkArray.drinks[0]);
+    // createDrinkArray(drinkArray.drinks[0]);
   })
+}
+function selectDrink(data, recipeIndex){
+  var drinkArray = data;
+  console.log(drinkArray);
+  // console.log(drinkArray.drinks);
+  // console.log(drinkArray.drinks[0]);
+  createDrinkArray(drinkArray.drinks[recipeIndex]);
 }
 function createDrinkArray(userDrink){
   var ingredientList = [];
@@ -79,6 +107,7 @@ function displayImage(imgLink) {
   console.log(imgLink);
   var image = document.createElement("img");
   image.setAttribute("src", imgLink);
+  // image.setAttribute("class", "float-right");
   document.querySelector("#img-holder").appendChild(image);
 }
 function displayIngrList(ingrArray, name) {
@@ -98,8 +127,7 @@ function clearCurrentDisplay(){
       let imgEl = imgParent.firstChild;
       imgParent.removeChild(imgEl);
     }
-  }
-  
+  } 
   var parentNode = document.querySelector("#ingList");
   if(parentNode){
     while(parentNode.hasChildNodes()){
@@ -111,3 +139,11 @@ function clearCurrentDisplay(){
 
 $("#btnFood").on("click", "button", callFoodAPI);
 $("#btnDrink").on("click", "button", callDrinkAPI);
+$("#nextBtn").on("click", function(){
+  recipeIndex++;
+  selectFood(recipeIndex);
+});
+$("#prevBtn").on("click", function(){
+  recipeIndex--;
+  selectFood(recipeIndex);
+});
