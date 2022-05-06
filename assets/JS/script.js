@@ -18,7 +18,7 @@ function callFoodAPI() {
     })
     .then(function (data) {
       var prevSearch = JSON.stringify(data);
-      localStorage.setItem("input", prevSearch);
+      localStorage.setItem("foodInput", prevSearch);
       selectFood(recipeIndex);
       // console.log(data);
       // var foodArray = data.hits[0].recipe.ingredientLines;
@@ -30,17 +30,21 @@ function callFoodAPI() {
 
 }
 function selectFood(recipeIndex){
-  var data = JSON.parse(localStorage.getItem("input"));
+  var data = JSON.parse(localStorage.getItem("foodInput"));
   console.log(data);
   console.log(recipeIndex);
   var foodArray = data.hits[recipeIndex].recipe.ingredientLines;
   var foodName = data.hits[recipeIndex].recipe.label;
   var foodImg = data.hits[recipeIndex].recipe.image;
+  document.getElementById("prevFood").disabled = false;
+  document.getElementById("nextFood").disabled = false;
   if(!foodArray[recipeIndex-1]){
     //disable prevBtn
+    document.getElementById("prevFood").disabled = true;
   }
   if(!foodArray[recipeIndex+1]){
     //disable nextBtn
+    document.getElementById("nextFood").disabled = true;
   }
   // console.log(!!foodArray[recipeIndex-1]);
   displayIngrList(foodArray, foodName);
@@ -56,11 +60,13 @@ function callDrinkAPI() {
   // var drinksApi = "https://www.thecocktaildb.com/api/json/v1/1/search.php?s=margarita";
   fetch(drinksApi)
   .then(function (data) {
-    // console.log(data);
     return data.json();
   })
   .then(function (data){
-    selectDrink(data, recipeIndex);
+    var prevSearch = JSON.stringify(data);
+    console.log(data);
+    localStorage.setItem("drinkInput", prevSearch);
+    selectDrink(recipeIndex);
     // var drinkArray = data;
     // console.log(drinkArray);
     // // console.log(drinkArray.drinks);
@@ -68,9 +74,20 @@ function callDrinkAPI() {
     // createDrinkArray(drinkArray.drinks[0]);
   })
 }
-function selectDrink(data, recipeIndex){
+function selectDrink(recipeIndex){
+  var data = JSON.parse(localStorage.getItem("drinkInput"));
   var drinkArray = data;
   console.log(drinkArray);
+  document.getElementById("prevDrink").disabled = false;
+  document.getElementById("nextDrink").disabled = false;
+  if(!drinkArray.drinks[recipeIndex-1]){
+    //disable prevBtn
+    document.getElementById("prevDrink").disabled = true;
+  }
+  if(!drinkArray.drinks[recipeIndex+1]){
+    //disable nextBtn
+    document.getElementById("nextDrink").disabled = true;
+  }
   // console.log(drinkArray.drinks);
   // console.log(drinkArray.drinks[0]);
   createDrinkArray(drinkArray.drinks[recipeIndex]);
@@ -104,7 +121,7 @@ function createDrinkArray(userDrink){
 
 
 function displayImage(imgLink) {
-  console.log(imgLink);
+  // console.log(imgLink);
   var image = document.createElement("img");
   image.setAttribute("src", imgLink);
   // image.setAttribute("class", "float-right");
@@ -139,11 +156,19 @@ function clearCurrentDisplay(){
 
 $("#btnFood").on("click", "button", callFoodAPI);
 $("#btnDrink").on("click", "button", callDrinkAPI);
-$("#nextBtn").on("click", function(){
+$("#nextFood").on("click", function(){
   recipeIndex++;
   selectFood(recipeIndex);
 });
-$("#prevBtn").on("click", function(){
+$("#prevFood").on("click", function(){
   recipeIndex--;
   selectFood(recipeIndex);
+});
+$("#nextDrink").on("click", function(){
+  recipeIndex++;
+  selectDrink(recipeIndex);
+});
+$("#prevDrink").on("click", function(){
+  recipeIndex--;
+  selectDrink(recipeIndex);
 });
