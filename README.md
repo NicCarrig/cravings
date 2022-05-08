@@ -1,3 +1,5 @@
+Deployed at: https://niccarrig.github.io/cravings/
+
 # Group 7 - Project 1: Craving Finder
 
 The goal of this project was to create a website that allowed you to find ingredients for a food or drink that you type into the search bar.
