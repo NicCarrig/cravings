@@ -27,7 +27,6 @@ function callFoodAPI() {
       // displayIngrList(foodArray, foodName);
       // displayImage(foodImg);
     });
-
 }
 function selectFood(recipeIndex){
   var data = JSON.parse(localStorage.getItem("foodInput"));
